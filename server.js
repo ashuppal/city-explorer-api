@@ -1,9 +1,14 @@
+//code for lab 10
+
 'use strict';
 
-// this is a library that lets our node code read from a .env file.
 require('dotenv').config();
+
 const express = require ('express');
+
 const cors = require ('cors');
+
+const getWeather = require('./weather.js');
 
 const PORT = process.env.PORT;
 
@@ -12,11 +17,23 @@ let app = express();
 app.use(cors());
 
 let getMovies = require('./Movies.js');
+
 app.get('/movies', getMovies);
 
 
-let weather = require('./weather.js');
-app.get('/weather', weather);
+app.get('/weather', weatherHandler);
+
+async function weatherHandler(request, response) {
+  const { lat, lon } = request.query;
+  try {
+    let weatherData = await getWeather(lat, lon);
+    response.send(weatherData);
+  } catch (e) {
+    response.status(500).send('Sorry. Something went wrong!');
+  }
+}
+// let weather = require('./weather.js');
+// app.get('/weather', weather);
 
 
 app.use;
@@ -30,7 +47,7 @@ app.listen(PORT, () => console.log(`listening on ${PORT}`));
 
 
 
-
+//code for lab 9
 
 // const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 // const axios = require('axios');
