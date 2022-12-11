@@ -14,11 +14,25 @@ const PORT = process.env.PORT;
 
 let app = express();
 
-app.use(cors());
+// Specify urls that are allowed to access the server.
+app.use(cors({
+  origin: ['http://localhost:3000','https://ash-city-explorer.netlify.app']
+}));
 
 let getMovies = require('./Movies.js');
 
-app.get('/movies', getMovies);
+app.get('/movies', moviesHandler);
+
+async function moviesHandler(request, response) {
+  const { city } = request.query;
+  try {
+    let movieData = await getMovies(city);
+    response.send(movieData);
+  } catch (e) {
+    response.status(500).send('Sorry. Something went wrong!');
+  }
+}
+
 
 
 app.get('/weather', weatherHandler);
